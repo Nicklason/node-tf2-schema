@@ -1,2 +1,3 @@
 # node-tf2-schema
-Get information about all TF2 items
+
+Get information about TF2 items, effects, skins and more

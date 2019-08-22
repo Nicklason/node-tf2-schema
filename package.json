@@ -1,0 +1,27 @@
+{
+  "name": "tf2-schema",
+  "version": "0.1.0",
+  "description": "Get information about TF2 items, effects, skins and more",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./",
+    "release": "np --no-cleanup"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nicklason/node-tf2-schema.git"
+  },
+  "author": "Nicklas Marc Pedersen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nicklason/node-tf2-schema/issues"
+  },
+  "homepage": "https://github.com/Nicklason/node-tf2-schema#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.2.1",
+    "eslint-config-google": "^0.13.0",
+    "nodemon": "^1.19.1"
+  },
+  "private": true
+}
