@@ -15,13 +15,16 @@ class TF2 {
             },
             items: (callback) => {
                 Schema.getItems(this.apiKey, callback);
+            },
+            paintkits: function (callback) {
+                Schema.getPaintKits(callback);
             }
         }, (err, result) => {
             if (err) {
                 return callback(err);
             }
 
-            const raw = Object.assign(result.overview, { items: result.items });
+            const raw = Object.assign(result.overview, { items: result.items, paintkits: result.paintkits });
             const schema = new Schema(raw);
 
             this.schema = schema;
