@@ -46,6 +46,10 @@ class TF2 {
     }
 
     _startUpdater () {
+        if (this.updateTime === -1) {
+            return;
+        }
+
         clearTimeout(this._updateTimeout);
         clearInterval(this._updateInterval);
 
