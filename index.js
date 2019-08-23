@@ -10,11 +10,13 @@ class TF2 {
         this.schema = null;
     }
 
-    setSchema (raw) {
-        const schema = this.schema || new Schema();
-        schema.raw = raw;
-
-        this.schema = schema;
+    setSchema (raw, time) {
+        if (this.schema !== null) {
+            this.schema.raw = raw;
+            this.schema.time = time || new Date().getTime();
+        } else {
+            this.schema = new Schema(raw, time);
+        }
 
         this._startUpdater();
     }
@@ -44,10 +46,21 @@ class TF2 {
     }
 
     _startUpdater () {
-        // TODO: Start by setting a timeout so that the schema updates when it is updateTime old, then after that set an interval
-
+        clearTimeout(this._updateTimeout);
         clearInterval(this._updateInterval);
-        this._updateInterval = setInterval(TF2.prototype.getSchema.bind(this), this.updateTime);
+
+        let wait = this.schema.time - new Date().getTime() + this.updateTime;
+        if (wait < 0) {
+            wait = 0;
+        }
+
+        this._updateTimeout = setTimeout(() => {
+            // Update the schema
+            this.getSchema(function () {});
+
+            // Set update interval
+            this._updateInterval = setInterval(TF2.prototype.getSchema.bind(this), this.updateTime);
+        }, wait);
     }
 }
 
