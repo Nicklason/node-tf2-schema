@@ -1,13 +1,40 @@
 const async = require('async');
 
+const inherits = require('util').inherits;
+const EventEmitter = require('events').EventEmitter;
+
 const Schema = require('./lib/schema.js');
 
 class TF2 {
     constructor (options) {
+        EventEmitter.call(this);
+
         this.apiKey = options.apiKey;
         this.updateTime = options.updateTime || 24 * 60 * 60 * 1000;
 
+        this.ready = false;
         this.schema = null;
+    }
+
+    init (callback) {
+        if (this.ready) {
+            return callback(null);
+        }
+
+        if (this.schema !== null) {
+            this.ready = true;
+            this.emit('ready');
+        }
+
+        this.getSchema(function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            this.ready = true;
+            this.emit('ready');
+            return callback(null);
+        });
     }
 
     setSchema (raw, time) {
@@ -16,6 +43,7 @@ class TF2 {
             this.schema.time = time || new Date().getTime();
         } else {
             this.schema = new Schema(raw, time);
+            this.emit('schema', this.schema);
         }
 
         this._startUpdater();
@@ -60,13 +88,17 @@ class TF2 {
 
         this._updateTimeout = setTimeout(() => {
             // Update the schema
-            this.getSchema(function () {});
+            this.getSchema((err) => {
+                this.emit('failed', err);
+            });
 
             // Set update interval
             this._updateInterval = setInterval(TF2.prototype.getSchema.bind(this), this.updateTime);
         }, wait);
     }
 }
+
+inherits(TF2, EventEmitter);
 
 module.exports = TF2;
 
