@@ -24,9 +24,10 @@ class TF2 {
         if (this.schema !== null) {
             this.ready = true;
             this.emit('ready');
+            return;
         }
 
-        this.getSchema(function (err) {
+        this.getSchema((err) => {
             if (err) {
                 return callback(err);
             }
@@ -37,12 +38,15 @@ class TF2 {
         });
     }
 
-    setSchema (raw, time) {
+    setSchema (data, fromUpdate) {
         if (this.schema !== null) {
-            this.schema.raw = raw;
-            this.schema.time = time || new Date().getTime();
+            this.schema.raw = data.raw;
+            this.schema.time = data.time || new Date().getTime();
         } else {
-            this.schema = new Schema(raw, time);
+            this.schema = new Schema(data);
+        }
+
+        if (fromUpdate) {
             this.emit('schema', this.schema);
         }
 
@@ -67,7 +71,7 @@ class TF2 {
 
             const raw = Object.assign(result.overview, { items: result.items, paintkits: result.paintkits });
 
-            this.setSchema(raw);
+            this.setSchema({ raw: raw }, true);
 
             callback(null, this.schema);
         });
