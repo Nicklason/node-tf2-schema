@@ -34,6 +34,7 @@ class TF2 {
         if (this.schema !== null) {
             this.ready = true;
             this.emit('ready');
+            callback(null);
             return;
         }
 
