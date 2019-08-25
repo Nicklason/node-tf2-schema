@@ -6,6 +6,11 @@ const EventEmitter = require('events').EventEmitter;
 const Schema = require('./lib/schema.js');
 
 class TF2 {
+    /**
+     * @param {Object} options
+     * @param {String} options.apiKey Steam API key
+     * @param {Number} options.updateTime
+     */
     constructor (options) {
         EventEmitter.call(this);
 
@@ -16,9 +21,14 @@ class TF2 {
         this.schema = null;
     }
 
+    /**
+     * Initializes the class
+     * @param {Function} callback
+     */
     init (callback) {
         if (this.ready) {
-            return callback(null);
+            callback(null);
+            return;
         }
 
         if (this.schema !== null) {
@@ -38,6 +48,11 @@ class TF2 {
         });
     }
 
+    /**
+     * Sets the schema using known data
+     * @param {Object} data Schema data
+     * @param {Boolean} fromUpdate If the schema is new or not
+     */
     setSchema (data, fromUpdate) {
         if (this.schema !== null) {
             this.schema.raw = data.raw;
@@ -53,6 +68,10 @@ class TF2 {
         this._startUpdater();
     }
 
+    /**
+     * Gets the schema from the TF2 API
+     * @param {Function} callback
+     */
     getSchema (callback) {
         async.parallel({
             overview: (callback) => {
@@ -77,6 +96,9 @@ class TF2 {
         });
     }
 
+    /**
+     * Starts schema updater
+     */
     _startUpdater () {
         if (this.updateTime === -1) {
             return;
