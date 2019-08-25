@@ -28,6 +28,5 @@
     "eslint": "^6.2.1",
     "eslint-config-google": "^0.13.0",
     "nodemon": "^1.19.1"
-  },
-  "private": true
+  }
 }
