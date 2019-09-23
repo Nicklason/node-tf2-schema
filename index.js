@@ -32,6 +32,8 @@ class TF2 {
         }
 
         if (this.schema !== null) {
+            this._startUpdater();
+
             this.ready = true;
             this.emit('ready');
             callback(null);
@@ -42,6 +44,8 @@ class TF2 {
             if (err) {
                 return callback(err);
             }
+
+            this._startUpdater();
 
             this.ready = true;
             this.emit('ready');
@@ -65,8 +69,6 @@ class TF2 {
         if (fromUpdate) {
             this.emit('schema', this.schema);
         }
-
-        this._startUpdater();
     }
 
     /**
