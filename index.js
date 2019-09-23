@@ -120,7 +120,7 @@ class TF2 {
             });
 
             // Set update interval
-            this._updateInterval = setInterval(TF2.prototype.getSchema.bind(this), this.updateTime);
+            this._updateInterval = setInterval(TF2.prototype.getSchema.bind(this, function () {}), this.updateTime);
         }, wait);
     }
 }
