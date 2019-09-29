@@ -22,9 +22,8 @@ schemaManager.init(function (err) {
     }
 });
 
+// this event is emitted when the schema has been fetched
 schemaManager.on('schema', function (schema) {
-    // this event is emitted when the schema has been fetched
-
     // writes the schema data to disk
     fs.writeFileSync(SCHEMA_PATH, JSON.stringify(schemaManager.toJSON()));
 });

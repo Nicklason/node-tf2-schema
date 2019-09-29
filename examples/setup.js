@@ -1,10 +1,10 @@
 const Schema = require('tf2-schema');
 
 // Create new instance of tf2-schema
-const schema = new Schema({ apiKey: 'your steam api key' });
+const schemaManager = new Schema({ apiKey: 'your steam api key' });
 
 // Initialize tf2-schema
-schema.init(function (err) {
+schemaManager.init(function (err) {
     if (err) {
         // Error occurred fetching the schema
         throw err;
@@ -13,6 +13,7 @@ schema.init(function (err) {
     // tf2-schema is now ready to be used
 });
 
-schema.on('ready', function () {
-    // this event is emitted when the init function has been called and finished without errors
+// this event is emitted when the init function has been called and finished without errors
+schemaManager.on('ready', function () {
+    console.log('tf2-schema is ready!');
 });
