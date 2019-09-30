@@ -1,7 +1,10 @@
 const async = require('async');
+const semver = require('semver');
 
 const inherits = require('util').inherits;
 const EventEmitter = require('events').EventEmitter;
+
+const version = require('./package.json').version;
 
 const Schema = require('./lib/schema.js');
 
@@ -31,7 +34,7 @@ class TF2 {
             return;
         }
 
-        if (this.schema !== null) {
+        if (this.schema !== null && this._updateWait() !== 0) {
             this._startUpdater();
 
             this.ready = true;
@@ -54,11 +57,16 @@ class TF2 {
     }
 
     /**
-     * Sets the schema using known data
+     * Sets the schema using known data. If the schema data does not contain a version, or the version does not satify our version, then the schema will be ignored
      * @param {Object} data Schema data
      * @param {Boolean} fromUpdate If the schema is new or not
      */
     setSchema (data, fromUpdate) {
+        // Ignore the schema if it does not contain a version, or if the schema has a higher version (minor or higher)
+        if ((!data.version && !fromUpdate) || semver.major(data.version) !== semver.major(version) || semver.minor(data.version) !== semver.minor(version)) {
+            return;
+        }
+
         if (this.schema !== null) {
             this.schema.raw = data.raw;
             this.schema.time = data.time || new Date().getTime();
@@ -76,6 +84,10 @@ class TF2 {
      * @param {Function} callback
      */
     getSchema (callback) {
+        if (this.apiKey === undefined) {
+            throw new Error('Missing API key');
+        }
+
         async.parallel({
             overview: (callback) => {
                 Schema.getOverview(this.apiKey, callback);
@@ -93,7 +105,7 @@ class TF2 {
 
             const raw = Object.assign(result.overview, { items: result.items, paintkits: result.paintkits });
 
-            this.setSchema({ raw: raw }, true);
+            this.setSchema({ version: version, raw: raw }, true);
 
             callback(null, this.schema);
         });
@@ -110,11 +122,6 @@ class TF2 {
         clearTimeout(this._updateTimeout);
         clearInterval(this._updateInterval);
 
-        let wait = this.schema.time - new Date().getTime() + this.updateTime;
-        if (wait < 0) {
-            wait = 0;
-        }
-
         this._updateTimeout = setTimeout(() => {
             // Update the schema
             this.getSchema((err) => {
@@ -123,7 +130,20 @@ class TF2 {
 
             // Set update interval
             this._updateInterval = setInterval(TF2.prototype.getSchema.bind(this, function () {}), this.updateTime);
-        }, wait);
+        }, this._updateWait());
+    }
+
+    _updateWait () {
+        if (this.updateTime === -1) {
+            return -1;
+        }
+
+        let wait = this.schema.time - new Date().getTime() + this.updateTime;
+        if (wait < 0) {
+            wait = 0;
+        }
+
+        return wait;
     }
 }
 
