@@ -97,13 +97,19 @@ class TF2 {
             },
             paintkits: function (callback) {
                 Schema.getPaintKits(callback);
+            },
+            items_game: function (callback) {
+                Schema.getItemsGame(callback);
             }
         }, (err, result) => {
             if (err) {
                 return callback(err);
             }
 
-            const raw = Object.assign(result.overview, { items: result.items, paintkits: result.paintkits });
+            const raw = {
+                schema: Object.assign(result.overview, { items: result.items, paintkits: result.paintkits }),
+                items_game: result.items_game
+            };
 
             this.setSchema({ version: version, raw: raw }, true);
 
