@@ -62,8 +62,8 @@ class TF2 {
      * @param {Boolean} fromUpdate If the schema is new or not
      */
     setSchema (data, fromUpdate) {
-        // Ignore the schema if it does not contain a version, or if the schema has a higher version (minor or higher)
-        if ((!data.version && !fromUpdate) || semver.major(data.version) !== semver.major(version) || semver.minor(data.version) !== semver.minor(version)) {
+        // Ignore the schema if it does not contain a version, or if the schema has a higher version (major)
+        if ((!data.version && !fromUpdate) || semver.major(data.version) !== semver.major(version)) {
             return;
         }
 
